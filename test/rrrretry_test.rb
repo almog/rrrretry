@@ -28,6 +28,15 @@ class Rrrrretry_test < Test::Unit::TestCase
       i
     end
     assert_equal 1, result
+
+    exception_filter = ->(e){ e.message == "special" }
+    special_exception = Exception.new("special")
+    result = GenericEnumerable.new([ special_exception, 1 ]).retry(exception_filter) do |i|
+      raise i if i == special_exception
+      i
+    end
+    assert_equal 1, result
+
     GenericEnumerable.new([]).retry {} # ensure no errors
   end
 end
